@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { InfiniteQueryObserverResult, useQuery } from '@tanstack/react-query'
 import fetcher from '../fetcher'
 
 export interface Todo {
@@ -10,7 +10,10 @@ export interface Todo {
 
 // select: data transformer
 // notifyOnChange: observing changes
-const useTodoQuery = (select: any, notifyOnChangeProps: any) => 
+const useTodoQuery = (
+  select: (data: Todo[]) => any,
+  notifyOnChangeProps: Array<keyof InfiniteQueryObserverResult> | 'all'
+) => 
   useQuery(['todos'], fetcher, {
     staleTime: Infinity,
     select,
