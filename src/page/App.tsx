@@ -4,10 +4,6 @@ import Todos from '../components/Todos'
 
 const App = () => (
   <>
-    <header>
-      <title>React Query Tutorial</title>
-    </header>
-
     <main className="wrapper">
       <Todos />
     </main>
