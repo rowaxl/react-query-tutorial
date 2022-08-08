@@ -1,16 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
 import fetcher from '../fetcher'
 
-interface Todo {
+export interface Todo {
   userId: number
   id: number
   title: string
   completed: boolean
 }
 
-const useFetchTodo = () => 
-  useQuery<Todo[]>(['todos'], fetcher, {
+// select: data transformer
+// notifyOnChange: observing changes
+const useTodoQuery = (select: any, notifyOnChangeProps: any) => 
+  useQuery(['todos'], fetcher, {
     staleTime: Infinity,
+    select,
+    notifyOnChangeProps,
   })
 
-export default useFetchTodo
+export const useCountTodo = () => useTodoQuery((data: Todo[]) => data.length, ['data'])
+
+export default useTodoQuery
