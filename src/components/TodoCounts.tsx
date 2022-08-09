@@ -1,5 +1,5 @@
 import React from 'react'
-import { useCountTodo } from '../lib/hooks/useFetchTodo'
+import { useCountTodo } from '../lib/hooks/useQueryTodo'
 
 const TodoCounts = () => {
   const countData = useCountTodo(false)
@@ -9,7 +9,7 @@ const TodoCounts = () => {
   return (
     <h2>
       {
-        countData &&
+        countData.data &&
         `Counts: ${countData.data}`
       }
     </h2>
