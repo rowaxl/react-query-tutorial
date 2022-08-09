@@ -44,7 +44,7 @@ export const useUpdateTodo = () => {
     (updatedTodo: Todo) => mutator('PUT', { ...updatedTodo, completed: !updatedTodo.completed }),
     {
       onSuccess: () =>
-        queryClient.invalidateQueries(['todos'])
+        queryClient.invalidateQueries(['todos']),
     }
   )
 }

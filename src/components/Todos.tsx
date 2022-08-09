@@ -10,6 +10,7 @@ import '../styles/Todos.css'
 
 const Todos = () => {
   const [needFetch, setNeedFetch] = useState(false)
+  const [updateError, setUpdateError] = useState<Error>()
   const { 
     data: todos,
     isLoading,
@@ -27,21 +28,36 @@ const Todos = () => {
     setNeedFetch(true)
   }
 
+  const handleCreateTodo = async () => {
+    // sync mutation
+    createTodo.mutate({
+      id: todos?.length + 1,
+      userId: 1,
+      title: loremIpsum(),
+      completed: false,
+    })
+  }
+
+  const handleToggleComplete = async (todo: Todo) => {
+    // asnyc mutation
+    const result = await updateTodo.mutateAsync(todo)
+      .catch(err => {
+        console.error(err)
+        setUpdateError(err)
+        return
+      })
+
+    if (result) {
+      setUpdateError(undefined)
+    }
+  }
+
   return (
     <>
       <div>
         {!needFetch && <button onClick={handleFetch}>Fetch</button>}
         {!isLoading && 
-          <button 
-            onClick={() => {
-              createTodo.mutate({
-                id: todos?.length + 1,
-                userId: 1,
-                title: loremIpsum(),
-                completed: false,
-              })
-            }}
-          >
+          <button onClick={handleCreateTodo}>
             Create New
           </button>}
       </div>
@@ -49,6 +65,7 @@ const Todos = () => {
       {isLoading && needFetch && <p>Loading...</p>}
 
       {error && <h4 style={{ color: 'red' }}>Some Error Happens!</h4>}
+      {updateError && <h4 style={{ color: 'red' }}>Failed to update Todo!</h4>}
 
       {!isLoading && todos &&
         <ul>
@@ -58,9 +75,7 @@ const Todos = () => {
                 <input 
                   type="checkbox" 
                   checked={todo.completed} 
-                  onChange={() => {
-                    updateTodo.mutate(todo)
-                  }}
+                  onChange={() => handleToggleComplete(todo)}
                 />
                 <p className={`todos ${todo.completed ? 'completed' : ''}`}>
                   {todo.title}
