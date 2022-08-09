@@ -1,22 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useTodoQuery, { Todo } from '../lib/hooks/useFetchTodo'
 import '../styles/Todos.css'
 
 const Todos = () => {
-  const { data: todos, isLoading } = useTodoQuery((data: Todo[]) => data, 'all');
+  const [needFetch, setNeedFetch] = useState(false)
+  const { data: todos, isLoading } = useTodoQuery(
+    (data: Todo[]) => data,
+    'all',
+    needFetch
+  );
 
-  if (isLoading) return <>Loading...</>
+  const handleFetch = () => {
+    setNeedFetch(true)
+  }
 
   return (
-    <ul>
-      { todos && todos.map((todo: Todo) => (
-        <li key={`todo-${todo.id}`}>
-          <p className={`todos ${todo.completed ? 'completed' : ''}`}>
-            {todo.title}
-          </p>
-        </li>
-      ))}
-    </ul>
+    <>
+      <div>
+        {!needFetch && <button onClick={handleFetch}>Fetch</button>}
+      </div>
+
+      {isLoading
+        ? <p>Loading</p>
+        : <ul>
+          {todos && todos.map((todo: Todo) => (
+            <li key={`todo-${todo.id}`}>
+              <p className={`todos ${todo.completed ? 'completed' : ''}`}>
+                {todo.title}
+              </p>
+            </li>
+          ))}
+      </ul>
+      }
+    </>
   )
 }
 
