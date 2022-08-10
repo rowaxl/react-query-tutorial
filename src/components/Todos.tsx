@@ -5,21 +5,25 @@ import {
   useTodoQuery,
   useAddTodo,
   useUpdateTodo,
+  State,
 } from '../lib/hooks/useQueryTodo'
 import '../styles/Todos.css'
 
 const Todos = () => {
   const [needFetch, setNeedFetch] = useState(false)
+  const [filter, setFilter] = useState<State>('undone')
   const [updateError, setUpdateError] = useState<Error>()
   const { 
     data: todos,
     isLoading,
     error,
-  } = useTodoQuery(
-    (data: Todo[]) => data,
-    'all',
-    needFetch
-  )
+    refetch,
+  } = useTodoQuery({
+    filter,
+    select: (data: Todo[]) => data,
+    notifyOnChangeProps: 'all',
+    enabled: needFetch
+  })
 
   const createTodo = useAddTodo()
   const updateTodo = useUpdateTodo()
@@ -55,10 +59,24 @@ const Todos = () => {
     <>
       <div>
         {!needFetch && <button onClick={handleFetch}>Fetch</button>}
-        {!isLoading && 
-          <button onClick={handleCreateTodo}>
-            Create New
-          </button>}
+        {needFetch && <button onClick={() => refetch()}>Refetch</button>}
+        {!isLoading &&
+          <div>
+            <div>
+              <button onClick={handleCreateTodo}>
+                Create
+              </button>
+            </div>
+            <div>
+              <input type="radio" onChange={() => setFilter('all')} checked={filter === 'all'} />
+              <label>All</label>
+              <input type="radio" onChange={() => setFilter('undone')} checked={filter === 'undone'} />
+              <label>Undone</label>
+              <input type="radio" onChange={() => setFilter('done')} checked={filter === 'done'} />
+              <label>Done</label>
+            </div>
+          </div>
+        }
       </div>
 
       {isLoading && needFetch && <p>Loading...</p>}

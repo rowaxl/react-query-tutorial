@@ -10,7 +10,7 @@ const TodoCounts = () => {
     <h2>
       {
         countData.data &&
-        `Counts: ${countData.data}`
+        `Todo Counts: ${countData.data}`
       }
     </h2>
   )
