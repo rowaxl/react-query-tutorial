@@ -31,7 +31,6 @@ const Todos = () => {
   const handleCreateTodo = async () => {
     // sync mutation
     createTodo.mutate({
-      id: todos?.length + 1,
       userId: 1,
       title: loremIpsum(),
       completed: false,
@@ -70,7 +69,7 @@ const Todos = () => {
       {!isLoading && todos &&
         <ul>
           {
-            todos.sort((a: Todo, b: Todo) => b.id - a.id).map((todo: Todo) => (
+            todos.sort((a: Todo, b: Todo) => b.id! - a.id!).map((todo: Todo) => (
               <li key={`todo-${todo.id}`} style={{ display: 'flex' }}>
                 <input 
                   type="checkbox" 

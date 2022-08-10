@@ -2,8 +2,8 @@ import { InfiniteQueryObserverResult, useMutation, useQuery, useQueryClient } fr
 import { fetcher, mutator } from '../fetcher'
 
 export interface Todo {
+  id?: number
   userId: number
-  id: number
   title: string
   completed: boolean
 }
@@ -15,7 +15,7 @@ export const useTodoQuery = (
   notifyOnChangeProps: Array<keyof InfiniteQueryObserverResult> | 'all',
   enabled: boolean
 ) => 
-  useQuery(['todos'], fetcher, {
+  useQuery<Todo[], Error>(['todos'], fetcher, {
     staleTime: Infinity,
     select,
     notifyOnChangeProps,
