@@ -10,12 +10,12 @@ export interface Todo {
 
 // select: data transformer
 // notifyOnChange: observing changes
-export const useTodoQuery = (
+export const useTodoQuery = <T = Todo[]>(
   select: (data: Todo[]) => any,
   notifyOnChangeProps: Array<keyof InfiniteQueryObserverResult> | 'all',
   enabled: boolean
 ) => 
-  useQuery<Todo[], Error>(['todos'], fetcher, {
+  useQuery<Todo[], Error, T>(['todos'], fetcher, {
     staleTime: Infinity,
     select,
     notifyOnChangeProps,
@@ -23,7 +23,7 @@ export const useTodoQuery = (
   })
 
 export const useCountTodo = (enabled: boolean) => 
-  useTodoQuery((data: Todo[]) => data.length, ['data'], enabled)
+  useTodoQuery<number>((data: Todo[]) => data.length, ['data'], enabled)
 
 export const useAddTodo = () => {
   const queryClient = useQueryClient()
