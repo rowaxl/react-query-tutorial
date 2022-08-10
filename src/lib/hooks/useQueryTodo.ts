@@ -1,4 +1,9 @@
-import { InfiniteQueryObserverResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { 
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryObserverResult,
+} from '@tanstack/react-query'
 import { fetcher, mutator } from '../fetcher'
 
 export interface Todo {
@@ -10,34 +15,41 @@ export interface Todo {
 
 export type State = 'all' | 'undone' | 'done'
 
-interface UseTodoQueryProps<T> {
+interface UseTodoQueryProps<TData> {
   filter: State
-  select: (data: Todo[]) => T
-  notifyOnChangeProps: Array<keyof InfiniteQueryObserverResult> | 'all'
+  select: (data: Todo[]) => TData
+  notifyOnChangeProps: Array<keyof QueryObserverResult> | 'all'
   enabled: boolean
+  initialData?: Todo[] | (() => Todo[]);
 }
 
 // select: data transformer
 // notifyOnChange: observing changes
-export const useTodoQuery = <T = Todo[]>({
+export const useTodoQuery = <TData>({
   filter,
   select,
   notifyOnChangeProps,
-  enabled
-}: UseTodoQueryProps<T>) => 
-  useQuery<Todo[], Error, T>(['todos', filter], () => fetcher(filter), {
-    staleTime: Infinity,
-    select,
-    notifyOnChangeProps,
-    enabled,
-  })
+  enabled,
+  initialData,
+}: UseTodoQueryProps<TData>) => 
+  useQuery<Todo[], Error, TData>(
+    ['todos', filter],
+    () => fetcher(filter),
+    {
+      staleTime: Infinity,
+      select,
+      notifyOnChangeProps,
+      enabled,
+      initialData,
+    })
 
-export const useCountTodo = (enabled: boolean) => 
+export const useCountTodo = () => 
   useTodoQuery<number>({
     filter: 'all',
-    select: (data: Todo[]) => data.length, 
+    select: (data: Todo[]) => data.length,
     notifyOnChangeProps: ['data'],
-    enabled
+    enabled: false,
+    initialData: []
   })
 
 export const useAddTodo = () => {

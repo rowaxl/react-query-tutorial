@@ -22,7 +22,7 @@ const Todos = () => {
     filter,
     select: (data: Todo[]) => data,
     notifyOnChangeProps: 'all',
-    enabled: needFetch
+    enabled: needFetch,
   })
 
   const createTodo = useAddTodo()
@@ -59,10 +59,12 @@ const Todos = () => {
     <>
       <div>
         {!needFetch && <button onClick={handleFetch}>Fetch</button>}
-        {needFetch && <button onClick={() => refetch()}>Refetch</button>}
-        {!isLoading &&
+        {needFetch && !isLoading &&
           <div>
             <div>
+              <button onClick={() => refetch()}>
+                Refetch
+              </button>
               <button onClick={handleCreateTodo}>
                 Create
               </button>

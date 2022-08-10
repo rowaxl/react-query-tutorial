@@ -15,9 +15,10 @@ export const fetcher = async(state: State): Promise<any> => {
     case 'done': {
       return result.filter((todo: Todo) => todo.completed)
     }
+    default: {
+      return result;
+    }
   }
-
-  return result;
 }
 
 export const mutator = async(method: 'POST' | 'PUT', todo: Todo) => {

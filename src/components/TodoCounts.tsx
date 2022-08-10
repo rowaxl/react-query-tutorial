@@ -2,16 +2,14 @@ import React from 'react'
 import { useCountTodo } from '../lib/hooks/useQueryTodo'
 
 const TodoCounts = () => {
-  const countData = useCountTodo(false)
+  // TODO: FilterをContext化して、カウントさせる
+  const countData = useCountTodo()
 
   console.log('todo updated', { isLoading: countData.isLoading, data: countData.data })
 
   return (
     <h2>
-      {
-        countData.data &&
-        `Todo Counts: ${countData.data}`
-      }
+      {`Todo Counts: ${countData.data}`}
     </h2>
   )
 }
