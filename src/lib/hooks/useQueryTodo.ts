@@ -19,6 +19,7 @@ interface UseTodoQueryProps<TData> {
   filter: State
   select: (data: Todo[]) => TData
   notifyOnChangeProps: Array<keyof QueryObserverResult> | 'all'
+  onError?: (error: Error) => void
   enabled: boolean
   initialData?: Todo[] | (() => Todo[]);
 }
@@ -29,6 +30,7 @@ export const useTodoQuery = <TData>({
   filter,
   select,
   notifyOnChangeProps,
+  onError,
   enabled,
   initialData,
 }: UseTodoQueryProps<TData>) => 
@@ -40,6 +42,7 @@ export const useTodoQuery = <TData>({
       select,
       notifyOnChangeProps,
       enabled,
+      onError,
       initialData,
     })
 

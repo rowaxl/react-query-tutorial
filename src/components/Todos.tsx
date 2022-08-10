@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { loremIpsum } from 'lorem-ipsum'
+import toast from 'react-hot-toast'
 import { 
   Todo,
   useTodoQuery,
@@ -22,6 +23,10 @@ const Todos = () => {
     filter,
     select: (data: Todo[]) => data,
     notifyOnChangeProps: 'all',
+    onError: error => { 
+      console.error(error)
+      toast.error(error.message)
+    },
     enabled: needFetch,
   })
 
@@ -59,7 +64,7 @@ const Todos = () => {
     <>
       <div>
         {!needFetch && <button onClick={handleFetch}>Fetch</button>}
-        {needFetch && !isLoading &&
+        {needFetch && !isLoading && !error &&
           <div>
             <div>
               <button onClick={() => refetch()}>
@@ -83,7 +88,14 @@ const Todos = () => {
 
       {isLoading && needFetch && <p>Loading...</p>}
 
-      {error && <h4 style={{ color: 'red' }}>Some Error Happens!</h4>}
+      {error && 
+        <>
+          <h4 style={{ color: 'red' }}>Some Error Happens! Try refetch!</h4>
+          <button onClick={() => refetch()}>
+            Refetch
+          </button>
+        </>
+      }
       {updateError && <h4 style={{ color: 'red' }}>Failed to update Todo!</h4>}
 
       {!isLoading && todos &&

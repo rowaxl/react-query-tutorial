@@ -6,7 +6,9 @@ export const fetcher = async(state: State): Promise<any> => {
   const res = await fetch(BASE_URL)
     .catch(err => err)
 
-  const result = await res.json()
+    if (Math.random() < 0.5) throw new Error('Error in fetcher')
+
+    const result = await res.json()
 
   switch (state) {
     case 'undone': {
