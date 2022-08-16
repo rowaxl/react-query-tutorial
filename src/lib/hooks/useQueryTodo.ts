@@ -61,8 +61,21 @@ export const useAddTodo = () => {
   return useMutation(
     (newTodo: Todo) => mutator('POST', newTodo),
     {
-      onSuccess: () =>
+      // onSuccess: () => {
+        // refetch
+        // queryClient.invalidateQueries(['todos'])
+
+        // update view directly
+        // queryClient.setQueryData(['todos'])
+      // },
+      onError: () => {
+        // Do rollback here
+        // mutator('DELETE', newTodo)
         queryClient.invalidateQueries(['todos'])
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(['todos'])
+      }
     }
   )
 }
