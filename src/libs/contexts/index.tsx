@@ -1,5 +1,5 @@
 import React from 'react'
-import { State } from '../hooks/useQueryTodo'
+import { State } from '../todos/hooks/useQueryTodo'
 import { TodoFilterContext } from "./todoFilterContext"
 
 interface ProviderInitialValues {

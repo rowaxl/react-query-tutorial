@@ -1,6 +1,6 @@
 import { useContext} from 'react'
-import { useCountTodo } from '../lib/hooks/useQueryTodo'
-import { TodoFilterContext } from '../lib/context/todoFilterContext'
+import { useCountTodo } from '../hooks/useQueryTodo'
+import { TodoFilterContext } from '../../contexts/todoFilterContext'
 
 const TodoCounts = () => {
   const { state: filter } = useContext(TodoFilterContext)

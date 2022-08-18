@@ -4,7 +4,7 @@ import {
   useQueryClient,
   QueryObserverResult,
 } from '@tanstack/react-query'
-import { fetcher, mutator } from '../fetcher'
+import { fetcher, mutator } from '../../fetcher'
 
 export interface Todo {
   id?: number

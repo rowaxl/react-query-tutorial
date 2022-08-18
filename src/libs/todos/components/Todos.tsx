@@ -6,9 +6,9 @@ import {
   useTodoQuery,
   useAddTodo,
   useUpdateTodo,
-} from '../lib/hooks/useQueryTodo'
+} from '../hooks/useQueryTodo'
 import '../styles/Todos.css'
-import { TodoFilterContext } from '../lib/context/todoFilterContext'
+import { TodoFilterContext } from '../../contexts/todoFilterContext'
 
 const Todos = () => {
   const [needFetch, setNeedFetch] = useState(false)

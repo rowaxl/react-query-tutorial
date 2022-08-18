@@ -1,4 +1,4 @@
-import { Todo, State } from "./hooks/useQueryTodo"
+import { Todo, State } from "./todos/hooks/useQueryTodo"
 
 const BASE_URL = 'http://lvh.me:4000/todos'
 
