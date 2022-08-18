@@ -3,24 +3,15 @@ import { Todo, State } from "./hooks/useQueryTodo"
 const BASE_URL = 'http://lvh.me:4000/todos'
 
 export const fetcher = async(state: State): Promise<any> => {
-  const res = await fetch(BASE_URL)
+  const query = state === 'all' ? '' : `?completed=${state === 'done'}`
+  const res = await fetch(`${BASE_URL}/${query}`)
     .catch(err => err)
 
-    if (Math.random() < 0.2) throw new Error('Error in fetcher')
+  if (Math.random() < 0.2) throw new Error('Error in fetcher')
 
-    const result = await res.json()
+  const result = await res.json()
 
-  switch (state) {
-    case 'undone': {
-      return result.filter((todo: Todo) => !todo.completed)
-    }
-    case 'done': {
-      return result.filter((todo: Todo) => todo.completed)
-    }
-    default: {
-      return result;
-    }
-  }
+  return result
 }
 
 export const mutator = 

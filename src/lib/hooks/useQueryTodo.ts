@@ -73,7 +73,6 @@ export const useAddTodo = () => {
         return { optimisticTodo }
       },
       onSuccess: (result, variables, context) => {
-        console.log({ result })
         if (result instanceof Error) throw result
 
         // Replace optimisticTodo to the result
@@ -89,7 +88,7 @@ export const useAddTodo = () => {
       onSettled: () => {
         queryClient.invalidateQueries(['todos'])
       },
-      retry: 3,
+      retry: 0,
     }
   )
 }
@@ -100,8 +99,39 @@ export const useUpdateTodo = () => {
   return useMutation(
     (updatedTodo: Todo) => mutator('PUT', { ...updatedTodo, completed: !updatedTodo.completed }),
     {
-      onSuccess: () =>
-        queryClient.invalidateQueries(['todos']),
+      onMutate: async(variables) => {
+        // Cancel current queries for the todos list
+        await queryClient.cancelQueries(['todos'])
+
+        const optimisticTodo = { ...variables }
+
+        // obtimistic rerender
+        queryClient.setQueryData(['todos'], (old: Todo[] | undefined) => {
+          if (!old) return
+
+          const targetIndex = old.findIndex(todo => todo.id === optimisticTodo.id)
+
+          return [...old.slice(0, targetIndex), optimisticTodo, ...old.slice(targetIndex + 1)]
+        })
+
+        return { optimisticTodo }
+      },
+      onSuccess: (result, variables, context) => {
+        if (result instanceof Error) throw result
+
+        // Replace optimisticTodo to the result
+        queryClient.setQueryData(['todos'], (old: Todo[] | undefined) => old && old.map(todo => todo.id === context?.optimisticTodo.id ? result : todo))
+      },
+      onError: async (error, variable, context) => {
+        console.log('on Error')
+        await new Promise(res => setTimeout(res, 3000))
+        console.log('do rollback')
+        // return todos list before updating
+        queryClient.setQueryData(['todos'], (old: Todo[] | undefined) => old)
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(['todos'])
+      },
     }
   )
 }
