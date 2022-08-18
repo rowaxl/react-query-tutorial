@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { loremIpsum } from 'lorem-ipsum'
 import toast from 'react-hot-toast'
 import { 
@@ -6,13 +6,13 @@ import {
   useTodoQuery,
   useAddTodo,
   useUpdateTodo,
-  State,
 } from '../lib/hooks/useQueryTodo'
 import '../styles/Todos.css'
+import { TodoFilterContext } from '../lib/context/todoFilterContext'
 
 const Todos = () => {
   const [needFetch, setNeedFetch] = useState(false)
-  const [filter, setFilter] = useState<State>('undone')
+  const {state: filter, setState: updateFilter} = useContext(TodoFilterContext)
   const [updateError, setUpdateError] = useState<Error>()
   const { 
     data: todos,
@@ -33,10 +33,6 @@ const Todos = () => {
   const createTodo = useAddTodo()
   const updateTodo = useUpdateTodo()
 
-  const handleFetch = () => {
-    setNeedFetch(true)
-  }
-
   const handleCreateTodo = async () => {
     // sync mutation
     createTodo.mutate({
@@ -44,6 +40,8 @@ const Todos = () => {
       title: loremIpsum(),
       completed: false,
     })
+
+    toast.success('New Todo created!')
   }
 
   const handleToggleComplete = async (todo: Todo) => {
@@ -57,13 +55,22 @@ const Todos = () => {
 
     if (result) {
       setUpdateError(undefined)
+      toast.success(`Todo ${todo.completed ? 'resumed!': 'completed!'}`)
     }
   }
+
+  useEffect(() => {
+    console.log({ needFetch })
+  }, [needFetch])
 
   return (
     <>
       <div>
-        {!needFetch && <button onClick={handleFetch}>Fetch</button>}
+        {!needFetch &&
+          <button onClick={() => setNeedFetch(true)}>
+            Fetch
+          </button>
+        }
         {needFetch && !isLoading && !error &&
           <div>
             <div>
@@ -75,11 +82,11 @@ const Todos = () => {
               </button>
             </div>
             <div>
-              <input type="radio" onChange={() => setFilter('all')} checked={filter === 'all'} />
+              <input type="radio" onChange={() => updateFilter('all')} checked={filter === 'all'} />
               <label>All</label>
-              <input type="radio" onChange={() => setFilter('undone')} checked={filter === 'undone'} />
+              <input type="radio" onChange={() => updateFilter('undone')} checked={filter === 'undone'} />
               <label>Undone</label>
-              <input type="radio" onChange={() => setFilter('done')} checked={filter === 'done'} />
+              <input type="radio" onChange={() => updateFilter('done')} checked={filter === 'done'} />
               <label>Done</label>
             </div>
           </div>

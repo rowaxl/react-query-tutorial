@@ -6,7 +6,7 @@ export const fetcher = async(state: State): Promise<any> => {
   const res = await fetch(BASE_URL)
     .catch(err => err)
 
-    if (Math.random() < 0.5) throw new Error('Error in fetcher')
+    if (Math.random() < 0.2) throw new Error('Error in fetcher')
 
     const result = await res.json()
 
@@ -23,7 +23,8 @@ export const fetcher = async(state: State): Promise<any> => {
   }
 }
 
-export const mutator = async(method: 'POST' | 'PUT', todo: Todo) => {
+export const mutator = 
+  async(method: 'POST' | 'PUT', todo: Todo): Promise<Todo | Error> => {
   const url = method === 'POST' ? BASE_URL : BASE_URL + `/${todo.id}`
   const res = await fetch(url, { 
     method,

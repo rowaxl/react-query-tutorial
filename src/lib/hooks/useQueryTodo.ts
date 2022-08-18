@@ -38,7 +38,7 @@ export const useTodoQuery = <TData>({
     ['todos', filter],
     () => fetcher(filter),
     {
-      staleTime: Infinity,
+      staleTime: 0,
       select,
       notifyOnChangeProps,
       enabled,
@@ -46,9 +46,9 @@ export const useTodoQuery = <TData>({
       initialData,
     })
 
-export const useCountTodo = () => 
+export const useCountTodo = (filter: State) => 
   useTodoQuery<number>({
-    filter: 'all',
+    filter,
     select: (data: Todo[]) => data.length,
     notifyOnChangeProps: ['data'],
     enabled: false,
@@ -61,21 +61,35 @@ export const useAddTodo = () => {
   return useMutation(
     (newTodo: Todo) => mutator('POST', newTodo),
     {
-      // onSuccess: () => {
-        // refetch
-        // queryClient.invalidateQueries(['todos'])
+      onMutate: async(variables) => {
+        // Cancel current queries for the todos list
+        await queryClient.cancelQueries(['todos'])
 
-        // update view directly
-        // queryClient.setQueryData(['todos'])
-      // },
-      onError: () => {
-        // Do rollback here
-        // mutator('DELETE', newTodo)
-        queryClient.invalidateQueries(['todos'])
+        const optimisticTodo = { ...variables }
+
+        // obtimistic rerender
+        queryClient.setQueryData(['todos'], (old: Todo[] | undefined) => old && [...old, optimisticTodo])
+
+        return { optimisticTodo }
+      },
+      onSuccess: (result, variables, context) => {
+        console.log({ result })
+        if (result instanceof Error) throw result
+
+        // Replace optimisticTodo to the result
+        queryClient.setQueryData(['todos'], (old: Todo[] | undefined) => old && old.map(todo => todo.id === context?.optimisticTodo.id ? result : todo))
+      },
+      onError: async (error, variable, context) => {
+        console.log('on Error')
+        await new Promise(res => setTimeout(res, 3000))
+        console.log('rollback')
+        // Remove optimistic todo from the todos list
+        queryClient.setQueryData(['todos'], (old: Todo[] | undefined) => old && old.filter(todo => todo.id !== context?.optimisticTodo.id))
       },
       onSettled: () => {
         queryClient.invalidateQueries(['todos'])
-      }
+      },
+      retry: 3,
     }
   )
 }

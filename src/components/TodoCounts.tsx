@@ -1,15 +1,16 @@
-import React from 'react'
+import { useContext} from 'react'
 import { useCountTodo } from '../lib/hooks/useQueryTodo'
+import { TodoFilterContext } from '../lib/context/todoFilterContext'
 
 const TodoCounts = () => {
-  // TODO: FilterをContext化して、カウントさせる
-  const countData = useCountTodo()
+  const { state: filter } = useContext(TodoFilterContext)
+  const countData = useCountTodo(filter)
 
   console.log('todo updated', { isLoading: countData.isLoading, data: countData.data })
 
   return (
     <h2>
-      {`Todo Counts: ${countData.data}`}
+      {`${filter.toUpperCase()} Todo Counts: ${countData.data}`}
     </h2>
   )
 }
