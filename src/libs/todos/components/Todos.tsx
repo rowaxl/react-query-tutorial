@@ -7,7 +7,7 @@ import {
   useAddTodo,
   useUpdateTodo,
 } from '../hooks/useQueryTodo'
-import '../styles/Todos.css'
+import '../../../styles/Todos.css'
 import { TodoFilterContext } from '../../contexts/todoFilterContext'
 
 const Todos = () => {

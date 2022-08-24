@@ -22,19 +22,19 @@ const createWrapper = () => ({ children }) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 )
 
+test('test useCustomHook', async () => {
+  const useCustomHook = () => useQuery(['customHook'], () => 'Hello')
+
+  const { result, waitFor } = renderHook(() => useCustomHook(), { wrapper: createWrapper() })
+
+  await waitFor(() => result.current.isSuccess)
+
+  expect(result.current.data).toEqual('Hello')
+})
+
 describe('test useQueryTodo', () => {
-  test('test useCustomHook', async () => {
-    const useCustomHook = () => useQuery(['customHook'], () => 'Hello')
-
-    const { result, waitFor } = renderHook(() => useCustomHook(), { wrapper: createWrapper() })
-
-    await waitFor(() => result.current.isSuccess)
-
-    expect(result.current.data).toEqual('Hello')
-  })
-
   test('test useTodoQuery', async () => {
-    const { result, waitFor } = renderHook(() => useTodoQuery(), { wrapper: createWrapper() })
+    const { result, waitFor } = renderHook(() => useTodoQuery({ filter: 'all' }), { wrapper: createWrapper() })
 
     await waitFor(() => result.current.isSuccess)
 
@@ -42,8 +42,8 @@ describe('test useQueryTodo', () => {
   })
 
   test('test useCountTodo', async () => {
-    const { result: todoQueryResult, waitFor: waitTodoQuery } = renderHook(() => useTodoQuery(), { wrapper: createWrapper() })
-    const { result: todoCountResult, waitFor: waitCountQuery } = renderHook(() => useCountTodo(), { wrapper: createWrapper() })
+    const { result: todoQueryResult, waitFor: waitTodoQuery } = renderHook(() => useTodoQuery({ filter: 'all' }), { wrapper: createWrapper() })
+    const { result: todoCountResult, waitFor: waitCountQuery } = renderHook(() => useCountTodo('all'), { wrapper: createWrapper() })
 
     await waitTodoQuery(() => todoQueryResult.current.isSuccess)
     await waitCountQuery(() => todoCountResult.current.isSuccess)
